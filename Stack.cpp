@@ -27,7 +27,7 @@ Error_t StackIncrease(struct StackArray* stack) {
         stack->capacity_ = 1;
     }
     else if (stack->size_ == stack->capacity_) {
-        stack->capacity_ = (size_t) stack->capacity_ * stack->increase_value_;
+        stack->capacity_ = (size_t) stack->capacity_ * INCREASE_VALUE;
     }
     else {
         exit(Error_t::INCREASE_ERROR);
@@ -46,8 +46,8 @@ Error_t StackIncrease(struct StackArray* stack) {
 Error_t StackDecrease(struct StackArray* stack) {
     assert(stack != NULL);
 
-    if (Capacity(stack) / Size(stack) >= stack->decrease_value_ && Capacity(stack) >= stack->decrease_value_) {
-        stack->capacity_ = (size_t) stack->capacity_ / stack->decrease_value_;
+    if (Capacity(stack) / Size(stack) >= DECREASE_VALUE && Capacity(stack) >= DECREASE_VALUE) {
+        stack->capacity_ = (size_t) stack->capacity_ / DECREASE_VALUE;
 
         realloc(stack->data_, sizeof(Type_t) * stack->capacity_);
         assert(stack->data_ != NULL);
@@ -62,8 +62,6 @@ struct StackArray Construct(int start_size) {
     struct StackArray new_stack;
     new_stack.size_ = 0;
     new_stack.capacity_ = start_size;
-    new_stack.increase_value_ = 2;
-    new_stack.decrease_value_ = 3;
     new_stack.data_ = (Type_t*) calloc(start_size, sizeof(Type_t));
 
     for(size_t i = 0; i < start_size; ++i) {
@@ -117,8 +115,6 @@ Error_t Destroy(struct StackArray* stack) {
 
     stack->size_ = -1;
     stack->capacity_ = -1;
-    stack->decrease_value_ = -1;
-    stack->increase_value_ = -1;
 
     free(stack->data_);
     stack->data_ = NULL;

@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+const int INCREASE_VALUE = 2;
+const int DECREASE_VALUE = 3;
+
 /*!
 Error codes
 !*/
@@ -27,8 +30,6 @@ typedef double Type_t;
 struct StackArray {
     size_t size_;
     size_t capacity_;
-    size_t increase_value_;
-    size_t decrease_value_;
     Type_t* data_;
 };
 
