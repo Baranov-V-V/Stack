@@ -50,6 +50,8 @@ struct StackArray {
 /*!
 returns size of stack
 @param[in] stack stack with size to return
+@param[in] variable to put size
+
 @return size size of stack
 !*/
 Error_t Size(StackArray* stack, int64_t* size);
@@ -57,7 +59,8 @@ Error_t Size(StackArray* stack, int64_t* size);
 /*!
 returns capacity of stack
 @param[in] stack stack with capacity to return
-@return capacity capacity of stack
+@param[in] capacity variable to put capacity
+@return error code (0 if poped succesfully)
 !*/
 Error_t Capacity(StackArray* stack, int64_t* capacity);
 
@@ -85,6 +88,7 @@ struct StackArray Construct(int start_size);
 /*!
 Pushes elem in stack with increases in capacity if needed
 @param[in] stack stack to push
+@param[in] value variable to push
 @return error code (0 if pushed successfully)
 !*/
 Error_t Push(struct StackArray* stack,Type_t value);
@@ -92,7 +96,8 @@ Error_t Push(struct StackArray* stack,Type_t value);
 /*!
 Gets last element of stack if it has
 @param[in] stack stack from witch take element
-@error code (0 if poped succesfully)
+@param[in] value variable to put top element
+@return error code (0 if poped succesfully)
 !*/
 Error_t Top(struct StackArray* stack, Type_t* value);
 
@@ -106,7 +111,7 @@ Error_t Pop(struct StackArray* stack);
 /*!
  Destroys stack so it can not be used again
 @param[in] stack stack to destroy
-@return
+@return error code (0 if poped succesfully)
 !*/
 Error_t Destroy(struct StackArray* stack);
 
