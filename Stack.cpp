@@ -33,9 +33,9 @@ Error_t StackIncrease(struct StackArray* stack) {
         exit(Error_t::INCREASE_ERROR);
     }
 
-    realloc(stack->data_, sizeof(Type) * stack->capacity_);
+    realloc(stack->data_, sizeof(Type_t) * stack->capacity_);
     assert(stack->data_ != NULL);
-    
+
     for(size_t i = old_capacity; i < Capacity(stack); ++i) {
         stack->data_[i] = NAN;
     }
@@ -48,8 +48,8 @@ Error_t StackDecrease(struct StackArray* stack) {
 
     if (Capacity(stack) / Size(stack) >= stack->decrease_value_ && Capacity(stack) >= stack->decrease_value_) {
         stack->capacity_ = (size_t) stack->capacity_ / stack->decrease_value_;
-        
-        realloc(stack->data_, sizeof(Type) * stack->capacity_);
+
+        realloc(stack->data_, sizeof(Type_t) * stack->capacity_);
         assert(stack->data_ != NULL);
     }
 
@@ -64,16 +64,16 @@ struct StackArray Construct(int start_size) {
     new_stack.capacity_ = start_size;
     new_stack.increase_value_ = 2;
     new_stack.decrease_value_ = 3;
-    new_stack.data_ = (Type*) calloc(start_size, sizeof(Type));
-    
+    new_stack.data_ = (Type_t*) calloc(start_size, sizeof(Type_t));
+
     for(size_t i = 0; i < start_size; ++i) {
         new_stack.data_[i] = NAN;
     }
-    
+
     return new_stack;
 }
 
-Error_t Push(struct StackArray* stack,Type value) {
+Error_t Push(struct StackArray* stack,Type_t value) {
     assert(stack != NULL);
 
     if (stack->size_ == stack->capacity_) {
@@ -88,9 +88,9 @@ Error_t Push(struct StackArray* stack,Type value) {
     return Error_t::SUCCESS;
 }
 
-Type Top(struct StackArray* stack) {
+Type_t Top(struct StackArray* stack) {
     assert(stack != NULL);
-    
+
     if (Size(stack) > 0) {
         return stack->data_[stack->size_ - 1];
     }
@@ -100,11 +100,11 @@ Type Top(struct StackArray* stack) {
 
 Error_t Pop(struct StackArray* stack) {
     assert(stack != NULL);
-    
+
     if (stack->size_ > 0) {
         StackDecrease(stack);
         stack->data_[stack->size_--] = NAN;
-        //--stack->size_;
+
         return Error_t::SUCCESS;
     }
     else {

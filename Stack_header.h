@@ -20,16 +20,16 @@ enum Error_t {
 
 
 /*!
-Type witch will be used in stack
+Type_t witch will be used in stack
 !*/
-typedef double Type;
+typedef double Type_t;
 
 struct StackArray {
     size_t size_;
     size_t capacity_;
     size_t increase_value_;
     size_t decrease_value_;
-    Type* data_;
+    Type_t* data_;
 };
 
 /*!
@@ -72,14 +72,14 @@ Pushes elem in stack with increases in capacity if needed
 @param[in] stack stack to push
 @return error code (0 if pushed successfully)
 !*/
-Error_t Push(struct StackArray* stack,Type value);
+Error_t Push(struct StackArray* stack,Type_t value);
 
 /*!
 Gets last element of stack if it has
 @param[in] stack stack from witch take element
 @return elem last element of stack
 !*/
-Type Top(struct StackArray* stack);
+Type_t Top(struct StackArray* stack);
 
 /*!
 Pops elem from stack if it has one
