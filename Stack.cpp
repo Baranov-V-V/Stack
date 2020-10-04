@@ -80,7 +80,7 @@ Error_t Push(struct StackArray* stack,Type_t value) {
     else if (stack->size_ > stack->capacity_){
         exit(Error_t::PUSH_ERROR);
     }
-    printf("%d ", Size(stack));
+
     (stack->data_)[stack->size_++] = value;
 
     return Error_t::SUCCESS;
