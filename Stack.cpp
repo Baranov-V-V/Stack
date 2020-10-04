@@ -10,17 +10,13 @@ int StackOk(struct StackArray* stack) {
 
     if (stack->size_ < 0 || stack->capacity_ < 0 || stack->size_ > stack->capacity_) {
         failure_count++;
-        printf("fail\n");
     }
 
     for (int i = stack->size_; i < stack->capacity_; i++) {
         if (stack->data_[i] != NAN) {
-            printf("%g %lld %lld ", stack->data_[i], stack->size_, stack->capacity_);
             failure_count++;
-            printf("fail2,\n");
         }
     }
-    printf("done %d\n", count);
 
     return failure_count;
 }
@@ -111,7 +107,7 @@ Error_t StackDecrease(struct StackArray* stack) {
         assert(stack->data_ != NULL);
     }
 
-    //ASSERT_OK(stack);
+    ASSERT_OK(stack);
     return Error_t::SUCCESS;
 }
 
