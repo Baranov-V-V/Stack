@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <assert.h>
+#include <time.h>
 #include <io.h>
 #include <stdlib.h>
 #include <math.h>
@@ -10,10 +11,10 @@
     char* file_name = "Stack_(" #stack ")_Dump.txt";  \
     FILE* fp = fopen(file_name, "w");           \
     fprintf(fp, "Stack <%s> is not OK\n", #stack);\
-    StackDump(&stack, file_name, fp);
+    StackDump(stack, file_name, fp);
 
 #define ASSERT_OK(stack) {         \
-    if (!StackOk(&stack)) {                  \
+    if (!StackOk(stack)) {                  \
         DUMP(stack);                          \
         assert(0);                            \
     }                                                         \

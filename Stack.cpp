@@ -3,23 +3,32 @@
 
 int StackOk(struct StackArray* stack) {
     assert(stack != NULL);
+    static int count = 0;
+    count++;
 
     int failure_count = 0;
 
     if (stack->size_ < 0 || stack->capacity_ < 0 || stack->size_ > stack->capacity_) {
         failure_count++;
+        printf("fail\n");
     }
 
     for (int i = stack->size_; i < stack->capacity_; i++) {
         if (stack->data_[i] != NAN) {
+            printf("%g %lld %lld ", stack->data_[i], stack->size_, stack->capacity_);
             failure_count++;
+            printf("fail2,\n");
         }
     }
+    printf("done %d\n", count);
 
     return failure_count;
 }
 
 void StackDump(struct StackArray* stack, const char* file_name, FILE* fp) {
+    assert(stack != NULL);
+    assert(fp != NULL);
+    assert(file_name != NULL);
 
     fprintf(fp, "adress of Stack: [%p]\n", stack);
     fprintf(fp, "{\n    size = %lld\n    capacity = %lld\n", stack->size_, stack->capacity_);
@@ -40,27 +49,34 @@ void StackDump(struct StackArray* stack, const char* file_name, FILE* fp) {
 
 Error_t Size(StackArray* stack, int64_t* size) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     if (stack->size_ >= 0) {
         *size = stack->size_;
         return Error_t::LENGTH_ERROR;
     }
 
+    ASSERT_OK(stack);
     return Error_t::LENGTH_ERROR;
 }
 
 Error_t Capacity(StackArray* stack, int64_t* capacity) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     if (stack->capacity_ >= 0) {
         *capacity = stack->capacity_;
         return Error_t::SUCCESS;
     }
 
+    ASSERT_OK(stack);
     return Error_t::LENGTH_ERROR;
 }
 
 Error_t StackIncrease(struct StackArray* stack) {
+    assert(stack != NULL);
+    ASSERT_OK(stack);
+
     int64_t old_capacity = stack->capacity_;
 
     if (stack->capacity_ == 0) {
@@ -80,11 +96,13 @@ Error_t StackIncrease(struct StackArray* stack) {
         stack->data_[i] = NAN;
     }
 
+    ASSERT_OK(stack);
     return Error_t::SUCCESS;
 }
 
 Error_t StackDecrease(struct StackArray* stack) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     if (stack->capacity_ / stack->size_ >= DECREASE_VALUE && stack->capacity_ >= DECREASE_VALUE) {
         stack->capacity_ = (int) stack->capacity_ / DECREASE_VALUE;
@@ -93,6 +111,7 @@ Error_t StackDecrease(struct StackArray* stack) {
         assert(stack->data_ != NULL);
     }
 
+    //ASSERT_OK(stack);
     return Error_t::SUCCESS;
 }
 
@@ -108,11 +127,13 @@ struct StackArray Construct(int start_size) {
         new_stack.data_[i] = NAN;
     }
 
+    ASSERT_OK(&new_stack);
     return new_stack;
 }
 
 Error_t Push(struct StackArray* stack,Type_t value) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     if (stack->size_ == stack->capacity_) {
         StackIncrease(stack);
@@ -122,22 +143,26 @@ Error_t Push(struct StackArray* stack,Type_t value) {
     }
     (stack->data_)[stack->size_++] = value;
 
+    ASSERT_OK(stack);
     return Error_t::SUCCESS;
 }
 
 Error_t Top(struct StackArray* stack, Type_t* value) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     if (stack->size_ > 0) {
         *value = stack->data_[stack->size_ - 1];
         return Error_t::SUCCESS;
     }
 
+    ASSERT_OK(stack);
     return Error_t::SUCCESS;
 }
 
 Error_t Pop(struct StackArray* stack) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     if (stack->size_ > 0) {
         StackDecrease(stack);
@@ -147,11 +172,13 @@ Error_t Pop(struct StackArray* stack) {
         exit(Error_t::LENGTH_ERROR);
     }
 
+    ASSERT_OK(stack);
     Error_t::SUCCESS;
 }
 
 Error_t Destroy(struct StackArray* stack) {
     assert(stack != NULL);
+    ASSERT_OK(stack);
 
     stack->size_ = -1;
     stack->capacity_ = -1;
@@ -159,6 +186,7 @@ Error_t Destroy(struct StackArray* stack) {
     free(stack->data_);
     stack->data_ = NULL;
 
+    ASSERT_OK(stack);
     return Error_t::SUCCESS;
 }
 
