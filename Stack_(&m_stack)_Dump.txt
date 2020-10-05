@@ -1,11 +1,12 @@
-Stack <&m_stack> is not OK
+Stack name: <m_stack>
+
 Error code : 3
 
-adress of Stack: [0061fed8]
+adress of Stack: [0061fed0]
 {
     size = 15
     capacity = 20
-    data adress: [00640d68]
+    data adress: [00b70d68]
    {
        *[0] = 41
        *[1] = 18467

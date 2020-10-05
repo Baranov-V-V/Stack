@@ -3,24 +3,27 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <io.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
 
 
+#ifndef NDEBUG
+#define SET_DEBUG(stack)      \
+    stack.stack_name_ = #stack
+#endif // NDEBUG
+
 #define DUMP(stack, StackErrors)                                                \
     const char* file_name = "Stack_(" #stack ")_Dump.txt";                      \
     FILE* fp = fopen(file_name, "w");                                           \
-    fprintf(fp, "Stack <%s> is not OK\n", #stack);                              \
     StackDump(stack, file_name, fp, StackErrors);
 
-#define ASSERT_OK(stack) {                                    \
+#define ASSERT_OK(stack)                                      \
     if (StackOk(stack) != StackErrors::OK) {                  \
         DUMP(stack, StackOk(stack));                          \
         assert(!"OK");                                        \
     }                                                         \
-}
+
 
 const int INCREASE_VALUE = 2;
 const int DECREASE_VALUE = 3;
@@ -62,6 +65,9 @@ Type_t witch will be used in stack as value type
 typedef double Type_t;
 
 struct StackArray {
+    #ifndef NDEBUG
+    char* stack_name_;
+    #endif // NDEBUG
     int_t size_;
     int_t capacity_;
     Type_t* data_;
@@ -138,3 +144,4 @@ Error_t Destroy(struct StackArray* stack);
 StackErrors StackOk(struct StackArray* stack);
 
 void StackDump(struct StackArray* stack,const char* file_name, FILE* fp, StackErrors err_no);
+

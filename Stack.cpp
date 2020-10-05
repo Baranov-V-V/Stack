@@ -1,35 +1,38 @@
 #include "Stack_header.h"
 
-
 StackErrors StackOk(struct StackArray* stack) {
     assert(stack != NULL);
 
     if (stack->size_ < 0) {
-        return StackErrors::SIZE_ERROR;
+        return SIZE_ERROR;
     }
     if (stack->capacity_ < 0) {
-        return StackErrors::CAPACITY_ERROR;
+        return CAPACITY_ERROR;
     }
     if (stack->size_ > stack->capacity_) {
-        return StackErrors::OVERFLOW;
+        return OVERFLOW;
     }
     if (stack->data_ == NULL) {
-        return StackErrors::DATA_NULL;
+        return DATA_NULL;
     }
 
     for (int i = stack->size_; i < stack->capacity_; i++) {
         if ( isfinite(stack->data_[i]) != 0 ) {
-            return StackErrors::POISON_ERROR;
+            return POISON_ERROR;
         }
     }
 
-    return StackErrors::OK;
+    return OK;
 }
 
 void StackDump(struct StackArray* stack, const char* file_name, FILE* fp, StackErrors err_no) {
     assert(stack != NULL);
     assert(fp != NULL);
     assert(file_name != NULL);
+
+    #ifndef NDEBUG
+    fprintf(fp, "Stack name: <%s>\n\n", stack->stack_name_);
+    #endif // NDEBUG
 
     fprintf(fp, "Error code : %d\n\n", err_no);
     fprintf(fp, "adress of Stack: [%p]\n", stack);
@@ -55,7 +58,7 @@ Error_t Size(StackArray* stack, int_t* size) {
 
     *size = stack->size_;
 
-    return Error_t::SUCCESS;
+    return SUCCESS;
 }
 
 Error_t Capacity(StackArray* stack, int_t* capacity) {
@@ -65,7 +68,7 @@ Error_t Capacity(StackArray* stack, int_t* capacity) {
     *capacity = stack->capacity_;
 
     ASSERT_OK(stack);
-    return Error_t::SUCCESS;
+    return SUCCESS;
 }
 
 Error_t StackIncrease(struct StackArray* stack) {
@@ -81,7 +84,7 @@ Error_t StackIncrease(struct StackArray* stack) {
         stack->capacity_ = (int_t) stack->capacity_ * INCREASE_VALUE;
     }
     else {
-        return Error_t::INCREASE_ERROR;
+        return INCREASE_ERROR;
     }
 
     stack->data_ = (Type_t*) realloc(stack->data_, sizeof(Type_t) * stack->capacity_);
@@ -92,7 +95,7 @@ Error_t StackIncrease(struct StackArray* stack) {
     }
 
     StackOk(stack);
-    return Error_t::SUCCESS;
+    return SUCCESS;
 }
 
 Error_t StackDecrease(struct StackArray* stack) {
@@ -107,7 +110,7 @@ Error_t StackDecrease(struct StackArray* stack) {
     }
 
     StackOk(stack);
-    return Error_t::SUCCESS;
+    return SUCCESS;
 }
 
 struct StackArray Construct(int start_size) {
@@ -135,7 +138,7 @@ Error_t Push(struct StackArray* stack,Type_t value) {
     (stack->data_)[stack->size_++] = value;
 
     StackOk(stack);
-    return Error_t::SUCCESS;
+    return SUCCESS;
 }
 
 Error_t Top(struct StackArray* stack, Type_t* value) {
@@ -144,11 +147,11 @@ Error_t Top(struct StackArray* stack, Type_t* value) {
 
     if (stack->size_ > 0) {
         *value = stack->data_[stack->size_ - 1];
-        return Error_t::SUCCESS;
+        return SUCCESS;
     }
 
     ASSERT_OK(stack);
-    return Error_t::TOP_ERROR;
+    return TOP_ERROR;
 }
 
 Error_t Pop(struct StackArray* stack) {
@@ -160,15 +163,14 @@ Error_t Pop(struct StackArray* stack) {
         stack->data_[--stack->size_] = NAN;
     }
     else {
-        return Error_t::POP_ERROR;
+        return POP_ERROR;
     }
     ASSERT_OK(stack);
-    Error_t::SUCCESS;
+    SUCCESS;
 }
 
 Error_t Destroy(struct StackArray* stack) {
     assert(stack != NULL);
-    ASSERT_OK(stack);
 
     stack->size_ = -1;
     stack->capacity_ = -1;
@@ -176,7 +178,6 @@ Error_t Destroy(struct StackArray* stack) {
     free(stack->data_);
     stack->data_ = NULL;
 
-    ASSERT_OK(stack);
-    return Error_t::SUCCESS;
+    return SUCCESS;
 }
 
