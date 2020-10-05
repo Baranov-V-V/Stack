@@ -1,22 +1,24 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <assert.h>
-#include <time.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <io.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
 
-#define DUMP(stack)  \
-    char* file_name = "Stack_(" #stack ")_Dump.txt";  \
-    FILE* fp = fopen(file_name, "w");           \
-    fprintf(fp, "Stack <%s> is not OK\n", #stack);\
-    StackDump(stack, file_name, fp);
 
-#define ASSERT_OK(stack) {         \
-    if (!StackOk(stack)) {                  \
-        DUMP(stack);                          \
-        assert(0);                            \
+#define DUMP(stack, StackErrors)                                                \
+    const char* file_name = "Stack_(" #stack ")_Dump.txt";                      \
+    FILE* fp = fopen(file_name, "w");                                           \
+    fprintf(fp, "Stack <%s> is not OK\n", #stack);                              \
+    StackDump(stack, file_name, fp, StackErrors);
+
+#define ASSERT_OK(stack) {                                    \
+    if (StackOk(stack) != StackErrors::OK) {                  \
+        DUMP(stack, StackOk(stack));                          \
+        assert(!"OK");                                        \
     }                                                         \
 }
 
@@ -27,23 +29,41 @@ const int DECREASE_VALUE = 3;
 Error codes
 !*/
 enum Error_t {
-    SUCCESS = 0,
-    LENGTH_ERROR = 1,
-    PUSH_ERROR = 2,
-    TOP_ERROR = 3,
+    SUCCESS        = 0,
+    LENGTH_ERROR   = 1,
+    PUSH_ERROR     = 2,
+    TOP_ERROR      = 3,
     INCREASE_ERROR = 4,
     DECREASE_ERROR = 5,
+    POP_ERROR      = 6
+};
+
+/*!
+Error codes for stack
+!*/
+enum StackErrors {
+    OK             = 0,
+    SIZE_ERROR     = 1,
+    CAPACITY_ERROR = 2,
+    POISON_ERROR   = 3,
+    DATA_NULL      = 4,
+    OVERFLOW       = 5
 };
 
 
 /*!
-Type_t witch will be used in stack
+type to store size and capacity
+!*/
+typedef int64_t int_t;
+
+/*!
+Type_t witch will be used in stack as value type
 !*/
 typedef double Type_t;
 
 struct StackArray {
-    int64_t size_;
-    int64_t capacity_;
+    int_t size_;
+    int_t capacity_;
     Type_t* data_;
 };
 
@@ -54,7 +74,7 @@ returns size of stack
 
 @return size size of stack
 !*/
-Error_t Size(StackArray* stack, int64_t* size);
+Error_t Size(StackArray* stack, int_t* size);
 
 /*!
 returns capacity of stack
@@ -62,7 +82,7 @@ returns capacity of stack
 @param[in] capacity variable to put capacity
 @return error code (0 if poped succesfully)
 !*/
-Error_t Capacity(StackArray* stack, int64_t* capacity);
+Error_t Capacity(StackArray* stack, int_t* capacity);
 
 /*!
  Increases stack in capacity by its Increase_value_
@@ -115,6 +135,6 @@ Error_t Pop(struct StackArray* stack);
 !*/
 Error_t Destroy(struct StackArray* stack);
 
-int StackOk(struct StackArray* stack);
+StackErrors StackOk(struct StackArray* stack);
 
-void StackDump(struct StackArray* stack, const char* file_name, FILE* fp);
+void StackDump(struct StackArray* stack,const char* file_name, FILE* fp, StackErrors err_no);
