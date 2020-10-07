@@ -1,12 +1,22 @@
 Stack name: <m_stack>
 
-Error code : 3
+Stack made
+   ON line 6
+   IN file C:\Users\VBAR\Documents\Programs_C\Stack\main.cpp
 
-adress of Stack: [0061fed0]
+Error code : 3 (POISON_ERROR)
+
+adress of Stack: [0061fec8]
 {
     size = 15
     capacity = 20
-    data adress: [00b70d68]
+    data adress: [00a12710]
+
+   Initial left canary value: BAAADCFEFEBDCBFE
+   Current left canary value: BAAADCFEFEBDCBFE
+   Initial right canary value: CAFACBEFBEABDFCF
+   Current right canary value: CAFACBEFBEABDFCF
+
    {
        *[0] = 41
        *[1] = 18467

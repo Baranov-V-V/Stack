@@ -62,12 +62,14 @@ enum Error_t {
 Error codes for stack
 !*/
 enum StackErrors {
-    OK             = 0,
-    SIZE_ERROR     = 1,
-    CAPACITY_ERROR = 2,
-    POISON_ERROR   = 3,
-    DATA_NULL      = 4,
-    OVERFLOW       = 5
+    OK                 = 0,
+    SIZE_ERROR         = 1,
+    CAPACITY_ERROR     = 2,
+    POISON_ERROR       = 3,
+    DATA_NULL          = 4,
+    OVERFLOW           = 5,
+    LEFT_CANARY_ERROR  = 6,
+    RIGHT_CANARY_ERROR = 7
 };
 
 static char* ErrorNames[] = {
@@ -76,7 +78,9 @@ static char* ErrorNames[] = {
     "CAPACITY_ERROR",
     "POISON_ERROR",
     "DATA IS NULL",
-    "STACK OVERFLOW"
+    "STACK OVERFLOW",
+    "LEFT CANARY VALUE IS CHANGED",
+    "RIGHT CANARY VALUE IS CHANGED",
 };
 
 
