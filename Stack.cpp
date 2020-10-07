@@ -2,8 +2,6 @@
 
 StackErrors StackOk(struct StackArray* stack) {
     assert(stack != NULL);
-    //printf("check begin\n");
-    //printf("<capacity: %lld size: %lld>\n",stack->capacity_, stack->size_);
 
     if (stack->size_ < 0) {
         return SIZE_ERROR;
@@ -105,15 +103,7 @@ Error_t StackIncrease(struct StackArray* stack) {
         return NO_INCREASE;
     }
 
-    void* increase_pointer = (char*)stack->data_ - sizeof(canary_t);
-    printf("increase pointer: %p\n", increase_pointer);
-
-    //for(int i = 1; i < 15; i++) {
-      //  printf("%d ", *((int*)increase_pointer - i));
-    //}
-    //printf("\n");
-
-    void* data_tmp = realloc(increase_pointer, sizeof(Type_t) * stack->capacity_ + 2 * sizeof(canary_t));
+    void* data_tmp = realloc((char*)stack->data_ - sizeof(canary_t), sizeof(Type_t) * stack->capacity_ + 2 * sizeof(canary_t));
     assert(data_tmp != NULL);
 
     printf("increased pointer : %p\n", data_tmp);
@@ -139,9 +129,6 @@ Error_t StackDecrease(struct StackArray* stack) {
     if (stack->size_ > 0 && stack->capacity_ / stack->size_ >= DECREASE_LEVEL && stack->capacity_ >= DECREASE_LEVEL) {
 
         stack->capacity_ = (int_t) stack->capacity_ / REALLOC_VALUE;
-
-        void* decrease_pointer = (char*)stack->data_ - sizeof(canary_t);
-        printf("decrease pointer: %p\n", decrease_pointer);
 
         void* data_tmp = realloc((char*)stack->data_ - sizeof(canary_t), sizeof(Type_t) * stack->capacity_ + 2 * sizeof(canary_t));
         assert(data_tmp != NULL);
@@ -169,20 +156,12 @@ struct StackArray Construct(int start_size) {
 
     void* data_tmp = calloc(1, sizeof(Type_t) * start_size + 2 * sizeof(canary_t));
     assert(data_tmp != NULL);
-    printf("construct pointer : %p\n", data_tmp);
-
-
-    //for(int i = 1; i < 15; i++) {
-      //  printf("%d ", *((int*)data_tmp - i));
-    //}
-    //printf("\n");
 
     new_stack.data_ = (Type_t*)((char*)data_tmp + sizeof(canary_t));
 
     *(canary_t*)((char*)new_stack.data_ - sizeof(canary_t)) = CANARY_LEFT;
     *(canary_t*)((char*)new_stack.data_ + (start_size + 1) * sizeof(Type_t)) = CANARY_RIGHT;
 
-    //printf("%d\n", new_stack.data_[0]);
     for(int_t i = 0; i < start_size; ++i) {
         new_stack.data_[i] = NAN;
     }
@@ -220,7 +199,7 @@ Error_t Pop(struct StackArray* stack) {
     assert(stack != NULL);
     ASSERT_OK(stack);
 
-    StackDecrease(stack);        //не забыть про канареек
+    StackDecrease(stack);
     if (stack->size_ > 0) {
         stack->data_[--stack->size_] = NAN;
     }
@@ -237,7 +216,7 @@ Error_t Destroy(struct StackArray* stack) {
     stack->size_ = -1;
     stack->capacity_ = -1;
 
-    free(stack->data_);  //не забыть про канареек
+    free((char*)stack->data_ - sizeof(canary_t));
     stack->data_ = NULL;
 
     return SUCCESS;
