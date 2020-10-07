@@ -53,8 +53,8 @@ enum Error_t {
     LENGTH_ERROR   = 1,
     PUSH_ERROR     = 2,
     TOP_ERROR      = 3,
-    NO_INCREASE = 4,
-    NO_DECREASE = 5,
+    NO_INCREASE    = 4,
+    NO_DECREASE    = 5,
     POP_ERROR      = 6
 };
 
