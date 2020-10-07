@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdio.h>
 #include <malloc.h>
 #include <assert.h>
@@ -7,11 +9,13 @@
 #include <math.h>
 #include <stdint.h>
 
+#ifdef BARANOV_V_V_DEBUG
 
-#ifndef NDEBUG
-#define SET_DEBUG(stack)      \
-    stack.stack_name_ = #stack
-#endif // NDEBUG
+#define CONSTRUCT(stack, new_size) \
+    stack = Construct(new_size);    \
+    stack.stack_name_ = #stack;      \
+    stack.current_line = __LINE__;   \
+    stack.current_file = __FILE__;
 
 #define DUMP(stack, StackErrors)                                                \
     const char* file_name = "Stack_(" #stack ")_Dump.txt";                      \
@@ -22,11 +26,24 @@
     if (StackOk(stack) != StackErrors::OK) {                  \
         DUMP(stack, StackOk(stack));                          \
         assert(!"OK");                                        \
-    }                                                         \
+    }
 
+#else
 
-const int INCREASE_VALUE = 2;
-const int DECREASE_VALUE = 3;
+#define CONSTRUCT(stack)
+#define ASSERT_OK(stack)
+#define DUMP(stack, StackErrors)
+
+#endif // MYDEBUG
+
+const int REALLOC_VALUE = 2;
+const int INCREASE_LEVEL = 2;
+const int DECREASE_LEVEL = 4;
+
+typedef uint64_t canary_t;
+
+const canary_t CANARY_LEFT = 0xBAAADCFEFEBDCBFE;
+const canary_t CANARY_RIGHT = 0xCAFACBEFBEABDFCF;
 
 /*!
 Error codes
@@ -36,8 +53,8 @@ enum Error_t {
     LENGTH_ERROR   = 1,
     PUSH_ERROR     = 2,
     TOP_ERROR      = 3,
-    INCREASE_ERROR = 4,
-    DECREASE_ERROR = 5,
+    NO_INCREASE = 4,
+    NO_DECREASE = 5,
     POP_ERROR      = 6
 };
 
@@ -53,6 +70,15 @@ enum StackErrors {
     OVERFLOW       = 5
 };
 
+static char* ErrorNames[] = {
+    "OK",
+    "SIZE_ERROR",
+    "CAPACITY_ERROR",
+    "POISON_ERROR",
+    "DATA IS NULL",
+    "STACK OVERFLOW"
+};
+
 
 /*!
 type to store size and capacity
@@ -65,9 +91,12 @@ Type_t witch will be used in stack as value type
 typedef double Type_t;
 
 struct StackArray {
-    #ifndef NDEBUG
+    #ifdef BARANOV_V_V_DEBUG
     char* stack_name_;
-    #endif // NDEBUG
+    char* current_file;
+    int current_line;
+    #endif // DEBUG
+
     int_t size_;
     int_t capacity_;
     Type_t* data_;
@@ -144,4 +173,3 @@ Error_t Destroy(struct StackArray* stack);
 StackErrors StackOk(struct StackArray* stack);
 
 void StackDump(struct StackArray* stack,const char* file_name, FILE* fp, StackErrors err_no);
-
