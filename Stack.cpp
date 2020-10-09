@@ -147,27 +147,30 @@ Error_t StackDecrease(struct StackArray* stack) {
     return SUCCESS;
 }
 
-struct StackArray Construct(int start_size) {
+Error_t Construct(int start_size, struct StackArray* new_stack) {
     assert(start_size >= 0);
 
-    struct StackArray new_stack;
-    new_stack.size_ = 0;
-    new_stack.capacity_ = start_size;
+    //struct StackArray new_stack;
+    new_stack->size_ = 0;
+    new_stack->capacity_ = start_size;
+    printf("size construct: %d, capacity construct: %d\n", new_stack->size_, new_stack->capacity_);
 
     void* data_tmp = calloc(1, sizeof(Type_t) * start_size + 2 * sizeof(canary_t));
     assert(data_tmp != NULL);
 
-    new_stack.data_ = (Type_t*)((char*)data_tmp + sizeof(canary_t));
+    new_stack->data_ = (Type_t*)((char*)data_tmp + sizeof(canary_t));
 
-    *(canary_t*)((char*)new_stack.data_ - sizeof(canary_t)) = CANARY_LEFT;
-    *(canary_t*)((char*)new_stack.data_ + (start_size + 1) * sizeof(Type_t)) = CANARY_RIGHT;
+    *(canary_t*)((char*)new_stack->data_ - sizeof(canary_t)) = CANARY_LEFT;
+    *(canary_t*)((char*)new_stack->data_ + (start_size + 1) * sizeof(Type_t)) = CANARY_RIGHT;
 
     for(int_t i = 0; i < start_size; ++i) {
-        new_stack.data_[i] = NAN;
+        new_stack->data_[i] = NAN;
     }
 
-    ASSERT_OK(&new_stack);
-    return new_stack;
+    printf("size construct: %d, capacity construct: %d\n", new_stack->size_, new_stack->capacity_);
+
+    //ASSERT_OK(&new_stack);
+    return SUCCESS;
 }
 
 Error_t Push(struct StackArray* stack,Type_t value) {

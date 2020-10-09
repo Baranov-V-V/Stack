@@ -142,7 +142,7 @@ creates new stack with given parameters
 @param[in] start_size start size of stack to create
 @return stack
 !*/
-struct StackArray Construct(int start_size);
+Error_t Construct(int start_size, struct StackArray* new_stack);
 
 /*!
 Pushes elem in stack with increases in capacity if needed
