@@ -10,14 +10,14 @@ hash_t RotateLeft(hash_t value, int shift) {
 hash_t MakeHash(void* data, int_t size) {
     assert(data != NULL);
     assert(size > 0);
-    printf("BEGIN\n");
+    
     hash_t hash_value = *((char*)data + 0);
-    //printf("hash value: %lld\n", hash_value);
+    
     for(int_t i = 1; i < size; i++) {
-        hash_value = RotateLeft(hash_value, i) ^ *((char*)data + i); //как сделать с ^
-        //printf("hash value: %lld\n", hash_value);
+        hash_value = RotateLeft(hash_value, i) ^ *((char*)data + i);
+        
     }
-    //printf("hash value: %lld\n", hash_value);
+   
     return hash_value;
 }
 
@@ -29,8 +29,7 @@ void HashStack(struct StackArray* stack) {
 
     stack->stack_hash = MakeHash(stack, sizeof(struct StackArray));
     stack->data_hash = MakeHash(stack->data_, stack->capacity_ * sizeof(Type_t));
-
-    //stack->hash_value = MakeHash(stack->data_, sizeof(char) * stack->capacity_);
+    
 }
 
 
@@ -144,9 +143,9 @@ Error_t Capacity(StackArray* stack, int_t* capacity) {
         return CAPACITY_ERROR;
     }
 
-
     HashStack(stack);
     ASSERT_OK(stack);
+    
     return SUCCESS;
 }
 
@@ -183,6 +182,7 @@ Error_t StackIncrease(struct StackArray* stack) {
 
     HashStack(stack);
     ASSERT_OK(stack);
+    
     return SUCCESS;
 }
 
@@ -209,6 +209,7 @@ Error_t StackDecrease(struct StackArray* stack) {
 
     HashStack(stack);
     ASSERT_OK(stack);
+    
     return SUCCESS;
 }
 
@@ -238,6 +239,7 @@ Error_t Construct(int start_size, struct StackArray* new_stack) {
 
     HashStack(new_stack);
     ASSERT_OK(new_stack);
+    
     return SUCCESS;
 }
 
@@ -251,6 +253,7 @@ Error_t Push(struct StackArray* stack,Type_t value) {
 
     HashStack(stack);
     ASSERT_OK(stack);
+    
     return SUCCESS;
 }
 
@@ -265,6 +268,7 @@ Error_t Top(struct StackArray* stack, Type_t* value) {
 
     HashStack(stack);
     ASSERT_OK(stack);
+    
     return TOP_ERROR;
 }
 
@@ -282,6 +286,7 @@ Error_t Pop(struct StackArray* stack) {
 
     HashStack(stack);
     ASSERT_OK(stack);
+    
     return SUCCESS;
 }
 
