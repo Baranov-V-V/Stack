@@ -12,7 +12,7 @@
 #ifdef BARANOV_V_V_DEBUG
 
 #define CONSTRUCT(stack, new_size) \
-    stack = Construct(new_size);    \
+    Construct(new_size, &stack);    \
     stack.stack_name_ = #stack;      \
     stack.current_line = __LINE__;   \
     stack.current_file = __FILE__;
@@ -42,8 +42,9 @@ const int DECREASE_LEVEL = 4;
 
 typedef uint64_t canary_t;
 
-const canary_t CANARY_LEFT = 0xBAAADCFEFEBDCBFE;
-const canary_t CANARY_RIGHT = 0xCAFACBEFBEABDFCF;
+typedef int64_t hash_t;
+
+const canary_t CANARY = 0xBAAADCFEFEBDCBFE;
 
 /*!
 Error codes
@@ -55,7 +56,9 @@ enum Error_t {
     TOP_ERROR      = 3,
     NO_INCREASE    = 4,
     NO_DECREASE    = 5,
-    POP_ERROR      = 6
+    POP_ERROR      = 6,
+    SIZE_ERROR     = 7,
+    CAPACITY_ERROR = 8
 };
 
 /*!
@@ -63,13 +66,17 @@ Error codes for stack
 !*/
 enum StackErrors {
     OK                 = 0,
-    SIZE_ERROR         = 1,
-    CAPACITY_ERROR     = 2,
+    INVALID_SIZE        = 1,
+    INVALID_CAPACITY     = 2,
     POISON_ERROR       = 3,
     DATA_NULL          = 4,
     OVERFLOW           = 5,
-    LEFT_CANARY_ERROR  = 6,
-    RIGHT_CANARY_ERROR = 7
+    BEGIN_DATA_CANARY_ERROR = 6,
+    END_DATA_CANARY_ERROR = 7,
+    BEGIN_STACK_CANARY_ERROR = 8,
+    END_STACK_CANARY_ERROR = 9,
+    STACK_HASH_ERROR = 10,
+    DATA_HASH_ERROR = 11,
 };
 
 static char* ErrorNames[] = {
@@ -79,8 +86,12 @@ static char* ErrorNames[] = {
     "POISON_ERROR",
     "DATA IS NULL",
     "STACK OVERFLOW",
-    "LEFT CANARY VALUE IS CHANGED",
-    "RIGHT CANARY VALUE IS CHANGED",
+    "LEFT DATA CANARY VALUE IS CHANGED",
+    "RIGHT DATA CANARY VALUE IS CHANGED",
+    "LEFT STACK CANARY VALUE IS CHANGED",
+    "RIGHT STACK CANARY VALUE IS CHANGED",
+    "STACK HASH VALUES DOES NOT MATCH",
+    "DATA HASH VALUES DOES NOT MATCH"
 };
 
 
@@ -95,15 +106,19 @@ Type_t witch will be used in stack as value type
 typedef double Type_t;
 
 struct StackArray {
+    canary_t canary_begin;
     #ifdef BARANOV_V_V_DEBUG
     char* stack_name_;
     char* current_file;
     int current_line;
+    hash_t data_hash;
+    hash_t stack_hash;
     #endif // DEBUG
 
     int_t size_;
     int_t capacity_;
     Type_t* data_;
+    canary_t canary_end;
 };
 
 /*!
@@ -177,3 +192,9 @@ Error_t Destroy(struct StackArray* stack);
 StackErrors StackOk(struct StackArray* stack);
 
 void StackDump(struct StackArray* stack,const char* file_name, FILE* fp, StackErrors err_no);
+
+hash_t RotateLeft(hash_t value, int shift);
+
+hash_t MakeHash(void* data, int_t size);
+
+void HashStack(struct StackArray* stack);
