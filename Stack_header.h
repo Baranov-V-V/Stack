@@ -11,15 +11,15 @@
 
 #ifdef BARANOV_V_V_DEBUG
 
-#define CONSTRUCT(stack, new_size) \
-    Construct(new_size, &stack);    \
-    stack.stack_name_ = #stack;      \
-    stack.current_line = __LINE__;   \
+#define CONSTRUCT(stack, new_size)      \
+    Construct(new_size, &stack);        \
+    stack.stack_name_ = #stack;         \
+    stack.current_line = __LINE__;      \
     stack.current_file = __FILE__;
 
-#define DUMP(stack, StackErrors)                                                \
-    const char* file_name = "Stack_(" #stack ")_Dump.txt";                      \
-    FILE* fp = fopen(file_name, "w");                                           \
+#define DUMP(stack, StackErrors)                                    \
+    const char* file_name = "Stack_(" #stack ")_Dump.txt";          \
+    FILE* fp = fopen(file_name, "w");                               \
     StackDump(stack, file_name, fp, StackErrors);
 
 #define ASSERT_OK(stack)                                      \
@@ -36,12 +36,11 @@
 
 #endif // MYDEBUG
 
-const int REALLOC_VALUE = 2;
+const int REALLOC_VALUE  = 2;
 const int INCREASE_LEVEL = 2;
 const int DECREASE_LEVEL = 4;
 
 typedef uint64_t canary_t;
-
 typedef int64_t hash_t;
 
 const canary_t CANARY = 0xBAAADCFEFEBDCBFE;
@@ -65,18 +64,18 @@ enum Error_t {
 Error codes for stack
 !*/
 enum StackErrors {
-    OK                 = 0,
-    INVALID_SIZE        = 1,
-    INVALID_CAPACITY     = 2,
-    POISON_ERROR       = 3,
-    DATA_NULL          = 4,
-    OVERFLOW           = 5,
-    BEGIN_DATA_CANARY_ERROR = 6,
-    END_DATA_CANARY_ERROR = 7,
+    OK                       = 0,
+    INVALID_SIZE             = 1,
+    INVALID_CAPACITY         = 2,
+    POISON_ERROR             = 3,
+    DATA_NULL                = 4,
+    OVERFLOW                 = 5,
+    BEGIN_DATA_CANARY_ERROR  = 6,
+    END_DATA_CANARY_ERROR    = 7,
     BEGIN_STACK_CANARY_ERROR = 8,
-    END_STACK_CANARY_ERROR = 9,
-    STACK_HASH_ERROR = 10,
-    DATA_HASH_ERROR = 11,
+    END_STACK_CANARY_ERROR   = 9,
+    STACK_HASH_ERROR         = 10,
+    DATA_HASH_ERROR          = 11
 };
 
 static char* ErrorNames[] = {
@@ -111,10 +110,11 @@ struct StackArray {
     char* stack_name_;
     char* current_file;
     int current_line;
+    #endif // DEBUG
+    
     hash_t data_hash;
     hash_t stack_hash;
-    #endif // DEBUG
-
+    
     int_t size_;
     int_t capacity_;
     Type_t* data_;
