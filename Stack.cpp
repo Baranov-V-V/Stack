@@ -2,6 +2,7 @@
 
 hash_t RotateLeft(hash_t value, int shift) {
     assert(shift >= 0);
+    
     const int BITS = 8;
 
     return (value << shift) | (value >> (sizeof(hash_t) * BITS - shift));
@@ -28,8 +29,7 @@ void HashStack(struct StackArray* stack) {
     stack->stack_hash = 0;
 
     stack->stack_hash = MakeHash(stack, sizeof(struct StackArray));
-    stack->data_hash = MakeHash(stack->data_, stack->capacity_ * sizeof(Type_t));
-    
+    stack->data_hash = MakeHash(stack->data_, stack->capacity_ * sizeof(Type_t)); 
 }
 
 
@@ -46,7 +46,6 @@ StackErrors StackOk(struct StackArray* stack) {
     if (stack->stack_hash != stack_hash_tmp) {
         return STACK_HASH_ERROR;
     }
-
     if (stack->size_ < 0) {
         return INVALID_SIZE;
     }
@@ -59,7 +58,6 @@ StackErrors StackOk(struct StackArray* stack) {
     if (stack->data_ == NULL) {
         return DATA_NULL;
     }
-
     if(*(canary_t*)((char*)stack->data_ - sizeof(canary_t)) != CANARY) {
         return BEGIN_DATA_CANARY_ERROR;
     }
@@ -72,14 +70,12 @@ StackErrors StackOk(struct StackArray* stack) {
     if(stack->canary_end != CANARY) {
         return END_STACK_CANARY_ERROR;
     }
-
     for (int i = stack->size_; i < stack->capacity_; i++) {
         if ( isfinite(stack->data_[i]) != 0 ) {
             return POISON_ERROR;
         }
     }
 
-    HashStack(stack);
     return OK;
 }
 
@@ -191,7 +187,6 @@ Error_t StackDecrease(struct StackArray* stack) {
     ASSERT_OK(stack);
 
     if (stack->size_ > 0 && stack->capacity_ / stack->size_ >= DECREASE_LEVEL && stack->capacity_ >= DECREASE_LEVEL) {
-
         stack->capacity_ = (int_t) stack->capacity_ / REALLOC_VALUE;
 
         void* data_tmp = realloc((char*)stack->data_ - sizeof(canary_t), sizeof(Type_t) * stack->capacity_ + 2 * sizeof(canary_t));
@@ -216,12 +211,10 @@ Error_t StackDecrease(struct StackArray* stack) {
 Error_t Construct(int start_size, struct StackArray* new_stack) {
     assert(start_size >= 0);
 
-    //struct StackArray new_stack;
     new_stack->canary_begin = CANARY;
     new_stack->canary_end = CANARY;
     new_stack->size_ = 0;
     new_stack->capacity_ = start_size;
-    printf("size construct: %d, capacity construct: %d\n", new_stack->size_, new_stack->capacity_);
 
     void* data_tmp = calloc(1, sizeof(Type_t) * start_size + 2 * sizeof(canary_t));
     assert(data_tmp != NULL);
@@ -235,8 +228,6 @@ Error_t Construct(int start_size, struct StackArray* new_stack) {
         new_stack->data_[i] = NAN;
     }
 
-    printf("size construct: %d, capacity construct: %d\n", new_stack->size_, new_stack->capacity_);
-
     HashStack(new_stack);
     ASSERT_OK(new_stack);
     
@@ -248,7 +239,6 @@ Error_t Push(struct StackArray* stack,Type_t value) {
     ASSERT_OK(stack);
 
     StackIncrease(stack);
-
     (stack->data_)[stack->size_++] = value;
 
     HashStack(stack);
