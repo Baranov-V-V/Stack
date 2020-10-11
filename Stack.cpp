@@ -116,7 +116,6 @@ void StackDump(struct StackArray* stack, const char* file_name, FILE* fp, StackE
     fprintf(fp, "{\n    size = %lld\n    capacity = %lld\n", stack->size_, stack->capacity_);
     fprintf(fp, "    data adress: [%p]\n\n", stack->data_);
 
-    #ifdef BARANOV_V_V_DEBUG
     fprintf(fp, "    Data hash value: %lld\n", stack->data_hash);
     fprintf(fp, "    Stack hash value: %lld\n\n", stack->stack_hash);
 
@@ -125,7 +124,6 @@ void StackDump(struct StackArray* stack, const char* file_name, FILE* fp, StackE
     fprintf(fp,"    Stack end   | %llX | %llX\n", CANARY, stack->canary_begin);
     fprintf(fp,"    Data begin  | %llX | %llX\n", *(canary_t*)((char*)stack->data_ - sizeof(canary_t)));
     fprintf(fp,"    Data end    | %llX | %llX\n", *(canary_t*)((char*)stack->data_ + (stack->capacity_ + 1) * sizeof(Type_t)));
-    #endif // BARANOV_V_V_DEBUG
 
     fprintf(fp, "\n    {\n");
     for (int_t i = 0; i < stack->capacity_; i++) {
@@ -199,8 +197,10 @@ Error_t StackDecrease(struct StackArray* stack) {
     ASSERT_OK(stack);
 
     if (stack->size_ > 0 && stack->capacity_ / stack->size_ >= DECREASE_LEVEL && stack->capacity_ >= DECREASE_LEVEL) {
+
         stack->capacity_ = (int_t) stack->capacity_ / REALLOC_VALUE;
         StackRealloc(stack, stack->capacity_);
+
     }
     else {
         return NO_DECREASE;
@@ -299,7 +299,7 @@ Error_t Destroy(struct StackArray* stack) {
     stack->size_ = -1;
     stack->capacity_ = -1;
 
-    free((char*)stack->data_ - sizeof(canary_t));
+    free(stack->data_ - sizeof(canary_t));
     stack->data_ = NULL;
 
     return SUCCESS;

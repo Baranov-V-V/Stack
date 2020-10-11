@@ -9,38 +9,13 @@
 #include <math.h>
 #include <stdint.h>
 
-#ifdef BARANOV_V_V_DEBUG
 
-#define CONSTRUCT(stack, new_size)      \
-    Construct(new_size, &stack);        \
-    stack.stack_name_ = #stack;         \
-    stack.current_line = __LINE__;      \
-    stack.current_file = __FILE__;
-
-#define DUMP(stack, StackErrors)                                    \
-    const char* file_name = "Stack_(" #stack ")_Dump.txt";          \
-    FILE* fp = fopen(file_name, "w");                               \
-    StackDump(stack, file_name, fp, StackErrors);
-
-#define ASSERT_OK(stack)                                      \
-    if (StackOk(stack) != StackErrors::OK) {                  \
-        DUMP(stack, StackOk(stack));                          \
-        assert(!"OK");                                        \
-    }
-
-#else
-
-#define CONSTRUCT(stack)
-#define ASSERT_OK(stack)
-#define DUMP(stack, StackErrors)
-
-#endif // MYDEBUG
-
-const int REALLOC_VALUE  = 2;
+const int REALLOC_VALUE = 2;
 const int INCREASE_LEVEL = 2;
 const int DECREASE_LEVEL = 4;
 
 typedef uint64_t canary_t;
+
 typedef int64_t hash_t;
 
 const canary_t CANARY = 0xBAAADCFEFEBDCBFE;
@@ -75,7 +50,7 @@ enum StackErrors {
     BEGIN_STACK_CANARY_ERROR = 8,
     END_STACK_CANARY_ERROR   = 9,
     STACK_HASH_ERROR         = 10,
-    DATA_HASH_ERROR          = 11
+    DATA_HASH_ERROR          = 11,
 };
 
 static char* ErrorNames[] = {
@@ -94,6 +69,37 @@ static char* ErrorNames[] = {
 };
 
 
+#ifdef BARANOV_V_V_DEBUG
+
+static StackErrors error_no;
+
+#define CONSTRUCT(stack, new_size) \
+    Construct(new_size, &stack);    \
+    stack.stack_name_ = #stack;      \
+    stack.current_line = __LINE__;   \
+    stack.current_file = __FILE__;
+
+#define DUMP(stack, StackErrors)                                                \
+    const char* file_name = "Stack_(" #stack ")_Dump.txt";                      \
+    FILE* fp = fopen(file_name, "w");                                           \
+    StackDump(stack, file_name, fp, StackErrors);
+
+#define ASSERT_OK(stack) \
+    error_no = StackOk(stack);                                \
+    if (error_no != OK) {                  \
+        DUMP(stack, error_no);                          \
+        assert(!"OK");                                        \
+    }
+
+#else
+
+#define CONSTRUCT(stack)
+#define ASSERT_OK(stack)
+#define DUMP(stack, StackErrors)
+
+#endif // MYDEBUG
+
+
 /*!
 type to store size and capacity
 !*/
@@ -110,11 +116,10 @@ struct StackArray {
     char* stack_name_;
     char* current_file;
     int current_line;
-    #endif // DEBUG
-    
     hash_t data_hash;
     hash_t stack_hash;
-    
+    #endif // DEBUG
+
     int_t size_;
     int_t capacity_;
     Type_t* data_;
@@ -198,3 +203,7 @@ hash_t RotateLeft(hash_t value, int shift);
 hash_t MakeHash(void* data, int_t size);
 
 void HashStack(struct StackArray* stack);
+
+void StackRealloc(struct StackArray* stack, int_t new_capacity);
+
+Error_t ShrinkToFit(struct StackArray* stack);
