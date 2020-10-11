@@ -82,7 +82,6 @@ StackErrors StackOk(struct StackArray* stack) {
         }
     }
 
-    //HashStack(stack);
     return OK;
 }
 
