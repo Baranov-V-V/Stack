@@ -199,10 +199,8 @@ Error_t StackDecrease(struct StackArray* stack) {
     ASSERT_OK(stack);
 
     if (stack->size_ > 0 && stack->capacity_ / stack->size_ >= DECREASE_LEVEL && stack->capacity_ >= DECREASE_LEVEL) {
-
         stack->capacity_ = (int_t) stack->capacity_ / REALLOC_VALUE;
         StackRealloc(stack, stack->capacity_);
-
     }
     else {
         return NO_DECREASE;
