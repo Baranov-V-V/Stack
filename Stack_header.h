@@ -9,6 +9,8 @@
 #include <math.h>
 #include <stdint.h>
 
+#define BARANOV_V_V_DEBUG
+
 
 const int REALLOC_VALUE = 2;
 const int INCREASE_LEVEL = 2;
@@ -44,7 +46,7 @@ enum StackErrors {
     INVALID_CAPACITY         = 2,
     POISON_ERROR             = 3,
     DATA_NULL                = 4,
-    OVERFLOW                 = 5,
+    STACK_OVERFLOW           = 5,
     BEGIN_DATA_CANARY_ERROR  = 6,
     END_DATA_CANARY_ERROR    = 7,
     BEGIN_STACK_CANARY_ERROR = 8,
@@ -112,6 +114,7 @@ typedef double Type_t;
 
 struct StackArray {
     canary_t canary_begin;
+
     #ifdef BARANOV_V_V_DEBUG
     char* stack_name_;
     char* current_file;
@@ -194,16 +197,53 @@ Error_t Pop(struct StackArray* stack);
 !*/
 Error_t Destroy(struct StackArray* stack);
 
+/*!
+Checks stack if is it in working condition
+@param[in] stack stack to destroy
+@return error code (0 if it is ok)
+!*/
 StackErrors StackOk(struct StackArray* stack);
 
-void StackDump(struct StackArray* stack,const char* file_name, FILE* fp, StackErrors err_no);
+/*!
+Dumps stack in file with all information
+@param[in] stack stack to dump
+@param[in] file_name to dump
+@param[in] fp file pointer to dump
+@param[in] err_no code of error
+!*/
+void StackDump(struct StackArray* stack, const char* file_name, FILE* fp, StackErrors err_no);
 
+/*!
+ Destroys stack so it can not be used again
+@param[in] stack stack to destroy
+@return error code (0 if poped succesfully)
+!*/
 hash_t RotateLeft(hash_t value, int shift);
 
+/*!
+Hashed given amount of data in bytes
+@param[in] data data to hash
+@param[in] size amount of bytes
+@return hash of data
+!*/
 hash_t MakeHash(void* data, int_t size);
 
+/*!
+Makes hash of the stack which is stored inside stack struct
+@param[in] stack stack to hash
+!*/
 void HashStack(struct StackArray* stack);
 
+/*!
+Reallocs stack to the given size
+@param[in] stack stack to realloc
+@param[in] new_capacity size of new stack
+!*/
 void StackRealloc(struct StackArray* stack, int_t new_capacity);
 
+/*!
+Makes capacity of stack same as it's size
+@param[in] stack stack to shrink
+@return error code (0 if shrinked succesfully)
+!*/
 Error_t ShrinkToFit(struct StackArray* stack);

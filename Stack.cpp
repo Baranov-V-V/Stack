@@ -57,7 +57,7 @@ StackErrors StackOk(struct StackArray* stack) {
         return INVALID_CAPACITY;
     }
     if (stack->size_ > stack->capacity_) {
-        return OVERFLOW;
+        return STACK_OVERFLOW;
     }
     if (stack->data_ == NULL) {
         return DATA_NULL;
